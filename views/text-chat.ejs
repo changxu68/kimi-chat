@@ -93,6 +93,13 @@
         const sendButton = document.getElementById('sendButton');
         const chatMessages = document.getElementById('chatMessages');
 
+        // Clear any existing messages when connecting
+        chatMessages.innerHTML = '';
+
+        socket.on('connect', () => {
+            console.log('Connected to server'); // Debug log
+        });
+
         function addMessage(message, isUser = true) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
@@ -118,8 +125,8 @@
 
         // Listen for responses from the server
         socket.on('chat response', (data) => {
+            console.log('Received message:', data.message); // Debug log
             addMessage(data.message, false);
-            // Re-enable input after receiving response
             messageInput.disabled = false;
             sendButton.disabled = false;
             messageInput.focus();

@@ -35,7 +35,23 @@ app.use('/pdf-gen', require('./routes/pdf-gen'));
 // Socket.io connection
 io.on('connection', (socket) => {
     console.log('User connected');
-    const userId = socket.id; // Using socket ID as user identifier
+    const userId = socket.id;
+    
+    // Immediately initialize chat when user connects
+    (async () => {
+        try {
+            const initialMessage = await kimiAPI.initializeTeacherChat(userId);
+            console.log('Sending initial message:', initialMessage); // Debug log
+            socket.emit('chat response', {
+                message: initialMessage
+            });
+        } catch (error) {
+            console.error('Error initializing chat:', error);
+            socket.emit('error', { 
+                message: 'Failed to initialize chat'
+            });
+        }
+    })();
     
     socket.on('chat message', async (message) => {
         try {
