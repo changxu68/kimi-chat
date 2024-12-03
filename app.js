@@ -5,6 +5,7 @@ const path = require('path');
 require('dotenv').config();
 const expressLayouts = require('express-ejs-layouts');
 const kimiAPI = require('./utils/kimiAPI');
+const imageChatRouter = require('./routes/image-chat');
 
 const app = express();
 const server = require('http').createServer(app);
@@ -29,7 +30,7 @@ app.set('views', path.join(__dirname, 'views'));
 // Routes
 app.use('/', require('./routes/index'));
 app.use('/text-chat', require('./routes/text-chat'));
-app.use('/image-gen', require('./routes/image-gen'));
+app.use('/image-chat', imageChatRouter);
 app.use('/pdf-gen', require('./routes/pdf-gen'));
 
 // Socket.io connection
