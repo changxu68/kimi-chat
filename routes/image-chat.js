@@ -3,6 +3,7 @@ const router = express.Router();
 const nodecallspython = require('node-calls-python');
 const py = nodecallspython.interpreter;
 const path = require('path');
+const axios = require('axios');
 
 // Initialize Python module
 let imageGenerator = null;
@@ -39,6 +40,7 @@ router.post('/api/generate-image', async (req, res) => {
             throw new Error('Image generator not initialized');
         }
 
+        // Call Python function to generate image - pass prompt as a single argument
         const response = await py.call(imageGenerator, "generate_image", prompt);
         
         if (!response) {
@@ -54,6 +56,37 @@ router.post('/api/generate-image', async (req, res) => {
     } catch (error) {
         console.error('Error generating image:', error);
         res.status(500).json({ error: 'Failed to generate image' });
+    }
+});
+
+// Add new endpoint for downloading images
+router.post('/api/download-image', async (req, res) => {
+    try {
+        const { imageUrl } = req.body;
+        
+        if (!imageUrl) {
+            return res.status(400).json({ error: 'Image URL is required' });
+        }
+
+        // Fetch the image using axios
+        const response = await axios({
+            method: 'get',
+            url: imageUrl,
+            responseType: 'arraybuffer'
+        });
+
+        // Set appropriate headers
+        res.set({
+            'Content-Type': response.headers['content-type'],
+            'Content-Disposition': 'attachment; filename=generated-image.png'
+        });
+
+        // Send the image data
+        res.send(Buffer.from(response.data, 'binary'));
+
+    } catch (error) {
+        console.error('Error downloading image:', error);
+        res.status(500).json({ error: 'Failed to download image' });
     }
 });
 

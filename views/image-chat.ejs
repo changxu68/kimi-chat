@@ -8,6 +8,38 @@
             max-width: 512px; /* Standard size for most AI generated images */
             margin: 10px 0;
         }
+
+        .image-container {
+            position: relative;
+            display: inline-block;
+            margin: 10px 0;
+        }
+
+        .download-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .download-btn:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .download-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
     </style>
 </head>
 <body>
@@ -46,7 +78,7 @@
                 
                 const data = await response.json();
                 
-                // Remove loading message
+                // Remove loading message and add image
                 const messages = document.getElementById('chat-messages');
                 messages.removeChild(messages.lastChild);
                 
@@ -70,10 +102,55 @@
             messageDiv.className = `message ${sender}-message`;
 
             if (isImage) {
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'image-container';
+
                 const img = document.createElement('img');
                 img.src = content;
                 img.className = 'image-message';
-                messageDiv.appendChild(img);
+
+                const downloadBtn = document.createElement('button');
+                downloadBtn.className = 'download-btn';
+                downloadBtn.innerHTML = `
+                    <svg class="download-icon" viewBox="0 0 24 24">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                    </svg>
+                    Download
+                `;
+                
+                downloadBtn.onclick = async () => {
+                    try {
+                        // Use our proxy endpoint instead of fetching directly
+                        const response = await fetch('/image-chat/api/download-image', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ imageUrl: content })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('Failed to download image');
+                        }
+
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `generated-image-${Date.now()}.png`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    } catch (error) {
+                        console.error('Error downloading image:', error);
+                        alert('Failed to download image');
+                    }
+                };
+
+                imageContainer.appendChild(img);
+                imageContainer.appendChild(downloadBtn);
+                messageDiv.appendChild(imageContainer);
             } else {
                 messageDiv.textContent = content;
             }
