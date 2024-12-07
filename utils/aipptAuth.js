@@ -1,10 +1,16 @@
 const CryptoJS = require('crypto-js');
 
+let aipptAuthInstance = null;
+
 class AipptAuth {
     constructor() {
+        if (!process.env.AIPPT_API_KEY || !process.env.AIPPT_SECRET_KEY) {
+            console.warn('AIPPT credentials not found');
+            return;
+        }
         this.API_KEY = process.env.AIPPT_API_KEY;
         this.API_SECRET = process.env.AIPPT_SECRET_KEY;
-        this.BASE_URL = 'https://co.aippt.cn';
+        this.BASE_URL = 'https://api.aippt.cn';
     }
 
     generateSignature(method, uri, timestamp) {
@@ -35,7 +41,7 @@ class AipptAuth {
             if (data.code === 0) {
                 return data.data;
             } else {
-                throw new Error(data.msg);
+                throw new Error(data.msg || 'Failed to get authentication code');
             }
         } catch (error) {
             console.error('AIPPT Auth Error:', error);
@@ -44,4 +50,11 @@ class AipptAuth {
     }
 }
 
-module.exports = new AipptAuth(); 
+module.exports = {
+    getInstance: () => {
+        if (!aipptAuthInstance) {
+            aipptAuthInstance = new AipptAuth();
+        }
+        return aipptAuthInstance;
+    }
+}; 

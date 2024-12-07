@@ -13,10 +13,15 @@ router.get('/', (req, res) => {
 // Get AIPPT authentication code
 router.post('/auth', async (req, res) => {
     try {
-        const userId = req.body.userId || '1'; // Get actual user ID from your auth system
-        const channel = 'web'; // Use consistent channel name
+        const auth = aipptAuth.getInstance();
+        if (!auth.API_KEY || !auth.API_SECRET) {
+            throw new Error('AIPPT credentials not configured');
+        }
         
-        const authData = await aipptAuth.getCode(userId, channel);
+        const userId = req.body.userId || '1';
+        const channel = 'web';
+        
+        const authData = await auth.getCode(userId, channel);
         res.json({
             appkey: authData.api_key,
             code: authData.code,
