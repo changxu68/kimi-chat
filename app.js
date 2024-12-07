@@ -31,7 +31,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use('/', require('./routes/index'));
 app.use('/text-chat', require('./routes/text-chat'));
 app.use('/image-chat', imageChatRouter);
-app.use('/pdf-gen', require('./routes/pdf-gen'));
+app.use('/ppt-gen', require('./routes/ppt-gen'));
 
 // Socket.io connection
 io.on('connection', (socket) => {
