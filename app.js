@@ -1,5 +1,4 @@
 const express = require('express');
-const { create } = require('express-handlebars');
 const bodyParser = require('body-parser');
 const path = require('path');
 require('dotenv').config();
@@ -11,14 +10,7 @@ const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
-const hbs = create({
-  defaultLayout: 'main',
-  extname: '.handlebars'
-});
-
 // Middleware
-app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
 app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
