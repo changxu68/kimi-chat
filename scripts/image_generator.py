@@ -1,3 +1,5 @@
+import sys
+print(sys.path)
 from zhipuai import ZhipuAI
 
 class ImageGenerator:
