@@ -1,23 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const nodecallspython = require('node-calls-python');
-const py = nodecallspython.interpreter;
-const path = require('path');
 const axios = require('axios');
-
-// Initialize Python module
-let imageGenerator = null;
-const API_KEY = process.env.ZHIPUAI_API_KEY;
-
-// Initialize Python interpreter and load the module
-(async () => {
-    try {
-        const pymodule = await py.import(path.join(__dirname, '../scripts/image_generator.py'));
-        imageGenerator = await py.create(pymodule, "ImageGenerator", API_KEY);
-    } catch (error) {
-        console.error('Failed to initialize Python module:', error);
-    }
-})();
+const zhipuAPI = require('../utils/zhipuAPI');
 
 // Route to render the chat page
 router.get('/', (req, res) => {
@@ -36,17 +20,8 @@ router.post('/api/generate-image', async (req, res) => {
             return res.status(400).json({ error: 'Prompt is required' });
         }
 
-        if (!imageGenerator) {
-            throw new Error('Image generator not initialized');
-        }
-
-        // Call Python function to generate image - pass prompt as a single argument
-        const response = await py.call(imageGenerator, "generate_image", prompt);
+        const response = await zhipuAPI.generateImage(prompt);
         
-        if (!response) {
-            throw new Error('Failed to generate image');
-        }
-
         if (response.error) {
             return res.status(400).json({ error: response.error });
         }
@@ -59,7 +34,7 @@ router.post('/api/generate-image', async (req, res) => {
     }
 });
 
-// Add new endpoint for downloading images
+// Keep the existing download endpoint
 router.post('/api/download-image', async (req, res) => {
     try {
         const { imageUrl } = req.body;
@@ -68,20 +43,17 @@ router.post('/api/download-image', async (req, res) => {
             return res.status(400).json({ error: 'Image URL is required' });
         }
 
-        // Fetch the image using axios
         const response = await axios({
             method: 'get',
             url: imageUrl,
             responseType: 'arraybuffer'
         });
 
-        // Set appropriate headers
         res.set({
             'Content-Type': response.headers['content-type'],
             'Content-Disposition': 'attachment; filename=generated-image.png'
         });
 
-        // Send the image data
         res.send(Buffer.from(response.data, 'binary'));
 
     } catch (error) {
