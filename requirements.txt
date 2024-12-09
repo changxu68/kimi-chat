@@ -1,3 +1,8 @@
-zhipuai==1.0.7
+wheel==0.42.0
+setuptools==69.0.2
+pip==24.0
+pyOpenSSL==24.0.0
+cryptography==42.0.5
 PyJWT==2.8.0
-cryptography==42.0.5 
+requests==2.31.0
+zhipuai==1.0.7 

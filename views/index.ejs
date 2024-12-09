@@ -3,67 +3,70 @@
 <head>
     <title>AI Teaching Assistant</title>
     <style>
-        .tabs-container {
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: #000;
+        }
+
+        .link-container {
             display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 2rem;
+            gap: 30px;
+            margin-top: 40px;
         }
 
-        .tab {
-            background-color: #4a90e2;
-            color: white;
-            text-align: center;
-            padding: 1.5rem;
-            border-radius: 8px;
-            width: 250px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .feature-link {
+            flex: 1;
             text-decoration: none;
-            transition: transform 0.2s;
+            padding: 30px;
+            background-color: #6c5ce7;
+            border-radius: 10px;
+            color: white;
+            transition: transform 0.3s ease;
         }
 
-        .tab:hover {
+        .feature-link:hover {
             transform: translateY(-5px);
         }
 
-        .tab-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
+        .feature-link h2 {
+            font-size: 1.5rem;
+            margin: 0 0 15px 0;
+            color: white;
         }
 
-        .tab-description {
-            font-size: 0.9rem;
+        .feature-link p {
+            font-size: 1rem;
+            margin: 0;
+            text-transform: uppercase;
+            opacity: 0.9;
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>AI-Powered Teaching Assistant</h1>
         
-        <div class="cards-container">
-            <a href="/text-chat" class="card">
-                <div class="card-icon">
-                    <img src="/images/chat-icon.png" alt="Chat">
-                </div>
+        <div class="link-container">
+            <a href="/text-chat" class="feature-link">
                 <h2>Text Generation</h2>
-                <p>Generate lesson plans and teaching materials with AI</p>
+                <p>SLIDES, LESSON PLANS, AND RESOURCES FOR EDUCATORS</p>
             </a>
 
-            <a href="/image-chat" class="card">
-                <div class="card-icon">
-                    <img src="/images/image-icon.png" alt="Images">
-                </div>
+            <a href="/image-chat" class="feature-link">
                 <h2>Image Generation</h2>
-                <p>Create educational visuals and diagrams</p>
+                <p>CREATE EDUCATIONAL VISUALS AND DIAGRAMS WITH AI</p>
             </a>
 
-            <a href="/ppt-gen" class="card">
-                <div class="card-icon">
-                    <img src="/images/ppt-icon.png" alt="PPT">
-                </div>
+            <a href="/ppt-gen" class="feature-link">
                 <h2>PPT Generation</h2>
-                <p>Generate complete lesson materials and presentations</p>
+                <p>GENERATE COMPLETE LESSON MATERIALS AND PRESENTATIONS</p>
             </a>
         </div>
     </div>
