@@ -13,10 +13,14 @@ router.get('/', (req, res) => {
 // Get AIPPT authentication code
 router.post('/auth', async (req, res) => {
     try {
-        const userId = req.body.userId || '1'; // Get actual user ID from your auth system
-        const channel = 'web'; // Use consistent channel name
+        const userId = req.body.userId || '1';
+        const channel = 'web';
+        
+        console.log('Auth Request:', { userId, channel });
         
         const authData = await aipptAuth.getCode(userId, channel);
+        console.log('Auth Response:', authData);
+        
         res.json({
             appkey: authData.api_key,
             code: authData.code,
@@ -24,7 +28,10 @@ router.post('/auth', async (req, res) => {
         });
     } catch (error) {
         console.error('Auth Error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ 
+            error: error.message,
+            details: error.response?.data || 'No additional details'
+        });
     }
 });
 
