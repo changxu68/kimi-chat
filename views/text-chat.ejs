@@ -100,10 +100,16 @@
             console.log('Connected to server'); // Debug log
         });
 
+        function cleanText(text) {
+            // Remove asterisks that are not at the beginning or end of a line
+            return text.replace(/(?<!^)\*(?!$)/gm, '').trim();
+        }
+
         function addMessage(message, isUser = true) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-            messageDiv.textContent = message;
+            // Clean the message text if it's from the bot
+            messageDiv.textContent = isUser ? message : cleanText(message);
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
