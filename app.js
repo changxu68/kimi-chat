@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 require('dotenv').config();
 const expressLayouts = require('express-ejs-layouts');
-const kimiAPI = require('./utils/kimiAPI');
+const volcengineAPI = require('./utils/volcengineAPI');
 const imageChatRouter = require('./routes/image-chat');
 
 const app = express();
@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
     // Immediately initialize chat when user connects
     (async () => {
         try {
-            const initialMessage = await kimiAPI.initializeTeacherChat(userId);
+            const initialMessage = await volcengineAPI.initializeTeacherChat(userId);
             console.log('Sending initial message:', initialMessage); // Debug log
             socket.emit('chat response', {
                 message: initialMessage
@@ -49,7 +49,7 @@ io.on('connection', (socket) => {
     socket.on('chat message', async (message) => {
         try {
             // Get response from Kimi API
-            const response = await kimiAPI.chatCompletion(message, userId);
+            const response = await volcengineAPI.chatCompletion(message, userId);
             
             // Send response back to client
             socket.emit('chat response', {
