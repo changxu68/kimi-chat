@@ -3,8 +3,8 @@ const bodyParser = require('body-parser');
 const path = require('path');
 require('dotenv').config();
 const expressLayouts = require('express-ejs-layouts');
-const volcengineAPI = require('./utils/volcengineAPI');
 const imageChatRouter = require('./routes/image-chat');
+const textChat = require('./routes/text-chat');
 
 const app = express();
 const server = require('http').createServer(app);
@@ -21,52 +21,12 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Routes
 app.use('/', require('./routes/index'));
-app.use('/text-chat', require('./routes/text-chat'));
+app.use('/text-chat', textChat.router);
 app.use('/image-chat', imageChatRouter);
 app.use('/ppt-gen', require('./routes/ppt-gen'));
 
-// Socket.io connection
-io.on('connection', (socket) => {
-    console.log('User connected');
-    const userId = socket.id;
-    
-    // Immediately initialize chat when user connects
-    (async () => {
-        try {
-            const initialMessage = await volcengineAPI.initializeTeacherChat(userId);
-            console.log('Sending initial message:', initialMessage); // Debug log
-            socket.emit('chat response', {
-                message: initialMessage
-            });
-        } catch (error) {
-            console.error('Error initializing chat:', error);
-            socket.emit('error', { 
-                message: 'Failed to initialize chat'
-            });
-        }
-    })();
-    
-    socket.on('chat message', async (message) => {
-        try {
-            // Get response from Kimi API
-            const response = await volcengineAPI.chatCompletion(message, userId);
-            
-            // Send response back to client
-            socket.emit('chat response', {
-                message: response
-            });
-        } catch (error) {
-            console.error('Error:', error);
-            socket.emit('error', { 
-                message: 'Failed to get response from AI'
-            });
-        }
-    });
-    
-    socket.on('disconnect', () => {
-        console.log('User disconnected');
-    });
-});
+// Setup Socket.IO handlers
+textChat.setupSocket(io);
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {

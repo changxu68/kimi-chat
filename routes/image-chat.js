@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const zhipuAPI = require('../utils/zhipuAPI');
+const volcengineImageAPI = require('../utils/volcengineImageAPI');
 
 // Route to render the chat page
 router.get('/', (req, res) => {
@@ -20,7 +20,7 @@ router.post('/api/generate-image', async (req, res) => {
             return res.status(400).json({ error: 'Prompt is required' });
         }
 
-        const response = await zhipuAPI.generateImage(prompt);
+        const response = await volcengineImageAPI.generateImage(prompt);
         
         if (response.error) {
             return res.status(400).json({ error: response.error });
